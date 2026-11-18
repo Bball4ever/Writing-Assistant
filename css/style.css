@@ -1,0 +1,201 @@
+/* All styling. Written phone-first: the base rules fit a narrow screen,
+   and the media query at the bottom adds room on wider ones. */
+
+:root {
+  --bg: #faf8f4;
+  --surface: #ffffff;
+  --text: #1f1d1a;
+  --muted: #6b665e;
+  --border: #ddd7cc;
+  --accent: #2f5d8a;
+  --accent-text: #ffffff;
+  --error-bg: #fbeaea;
+  --error-text: #8a1f1f;
+  --success: #2c6e3f;
+  --radius: 10px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #181715;
+    --surface: #232120;
+    --text: #ece8e1;
+    --muted: #a39d93;
+    --border: #3a3734;
+    --accent: #7fb0e0;
+    --accent-text: #10202f;
+    --error-bg: #3a1f1f;
+    --error-text: #f2b8b8;
+    --success: #8fd19e;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 16px; /* 16px stops phones from zooming in on inputs */
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 14px;
+  white-space: nowrap;
+  max-width: 60vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+h1 { font-size: 1.6rem; margin: 8px 0; }
+h2 { font-size: 1.15rem; margin: 0 0 8px; }
+.lead { color: var(--muted); margin-top: 0; }
+.muted { color: var(--muted); }
+.success { color: var(--success); font-weight: 600; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.notice {
+  background: var(--surface);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+
+button {
+  font: inherit;
+  min-height: 44px; /* comfortable tap target */
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.link-button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  text-decoration: underline;
+  padding: 8px;
+}
+
+.button-row, .link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+label { display: block; font-weight: 600; margin-bottom: 4px; }
+
+input[type="text"], input[type="password"] {
+  width: 100%;
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.choices { border: none; padding: 0; margin: 0; }
+.choice {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  align-items: center;
+  font-weight: 400;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.choice:last-child { border-bottom: none; }
+.choice input { width: 20px; height: 20px; margin: 0; }
+.choice small { grid-column: 2; color: var(--muted); }
+
+blockquote {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--border);
+}
+
+.error-box {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-top: 12px;
+}
+.error-box p { margin: 0 0 8px; }
+
+dialog {
+  width: min(420px, calc(100vw - 32px));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  padding: 16px;
+}
+dialog::backdrop { background: rgb(0 0 0 / 0.45); }
+.dialog-head { display: flex; justify-content: space-between; align-items: center; }
+.dialog-head h2 { margin: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (min-width: 700px) {
+  main { padding: 24px; }
+  h1 { font-size: 2rem; }
+}

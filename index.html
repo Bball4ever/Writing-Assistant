@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Draft Pick</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home">Draft Pick</a>
+    <!-- Shows the active model on every screen. Tapping it opens the picker. -->
+    <button id="model-badge" class="badge" type="button" aria-haspopup="dialog">Auto</button>
+  </header>
+
+  <!-- Each screen draws itself in here. -->
+  <main id="screen"></main>
+
+  <dialog id="model-dialog" aria-labelledby="model-dialog-title">
+    <div class="dialog-head">
+      <h2 id="model-dialog-title">Pick a model</h2>
+      <button type="button" class="link-button" data-close>Close</button>
+    </div>
+    <div class="dialog-body"></div>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
