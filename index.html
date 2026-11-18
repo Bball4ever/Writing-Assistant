@@ -16,6 +16,12 @@
   <!-- Each screen draws itself in here. -->
   <main id="screen"></main>
 
+  <!-- Notices that should survive a screen redraw, like "the outline has 6 scenes instead of 3 to 5". -->
+  <div id="notice" class="notice-bar" role="status" aria-live="polite" hidden>
+    <p></p>
+    <button type="button" class="link-button" data-dismiss>Dismiss</button>
+  </div>
+
   <dialog id="model-dialog" aria-labelledby="model-dialog-title">
     <div class="dialog-head">
       <h2 id="model-dialog-title">Pick a model</h2>

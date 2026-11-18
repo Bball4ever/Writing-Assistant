@@ -1,13 +1,17 @@
 // Settings: API key, model, feedback tone and the connection test.
-// Backup export and import arrive in Checkpoint 3.
-import { loadKey, saveKey, removeKey, loadSettings, updateSettings } from '../storage.js';
+// Also backup export and import.
+import {
+  loadKey, saveKey, removeKey, loadSettings, updateSettings,
+  exportBackupText, importBackupText, nowIso,
+} from '../storage.js';
 import { callClaude } from '../api.js';
 import { PROMPTS } from '../prompts.js';
+import { downloadFile } from '../export.js';
 import { buildModelChoices } from './modelPicker.js';
-import { el, errorBox } from './shared.js';
+import { el, add, errorBox, confirmDialog } from './shared.js';
 
-export function renderSettings(container) {
-  container.append(
+export function renderSettings(container, { refresh }) {
+  add(container, 
     el('h1', {}, 'Settings'),
     keySection(),
     el('section', { class: 'card' },
@@ -16,6 +20,41 @@ export function renderSettings(container) {
     ),
     toneSection(),
     testSection(),
+    backupSection(refresh),
+  );
+}
+
+function backupSection(refresh) {
+  const status = el('p', { class: 'muted', 'aria-live': 'polite' });
+  const fileInput = el('input', {
+    type: 'file', accept: '.json,application/json', class: 'sr-only', id: 'backup-file',
+    onchange: async () => {
+      const file = fileInput.files[0];
+      fileInput.value = '';
+      if (!file) return;
+      const ok = await confirmDialog('Importing replaces all your stories, drills and settings with the ones in the backup. Your API key stays. Go ahead?', 'Import');
+      if (!ok) return;
+      const result = importBackupText(await file.text());
+      if (result.ok) refresh();
+      else status.textContent = result.error;
+    },
+  });
+  return el('section', { class: 'card' },
+    el('h2', {}, 'Backup'),
+    el('p', { class: 'muted' }, 'Saves all your stories, drills and settings to one file. Your API key is never included.'),
+    el('div', { class: 'button-row' },
+      el('button', {
+        type: 'button',
+        onclick: () => {
+          const date = nowIso().slice(0, 10);
+          downloadFile(`draftpick-backup-${date}.json`, exportBackupText(), 'application/json');
+          status.textContent = 'Backup saved to your downloads.';
+        },
+      }, 'Export backup'),
+      el('button', { type: 'button', onclick: () => fileInput.click() }, 'Import backup'),
+    ),
+    fileInput,
+    status,
   );
 }
 

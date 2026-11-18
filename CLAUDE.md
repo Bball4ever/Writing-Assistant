@@ -38,7 +38,7 @@ Zane is building this to grow his coding and AI skills, so how you work matters 
 | `js/prompts.js` | Every system prompt, one per job, all in one place so Zane can tweak them |
 | `js/storage.js` | Saving, loading, auto-save, backup export and import |
 | `js/export.js` | Turns a finished story into HTML and text files |
-| `js/screens/*.js` | One file per screen |
+| `js/screens/*.js` | One file per screen, plus `shared.js` (building blocks every screen uses) and `help.js` (the Help button) |
 | `js/lib/*.js` | Pure logic: the dash checker, applying polish changes, JSON extraction, score averages, focus rotation |
 | `tests/*.test.js` | Node tests for everything in `js/lib/` |
 | `package.json` | `"type": "module"` and a `test` script, nothing else |
@@ -79,7 +79,7 @@ Zane picks the model in the app, either in Settings or by tapping the model badg
 | Claude Sonnet 5.5 | `claude-sonnet-5-5` |
 | Claude Haiku 5.5 | `claude-haiku-5-5` |
 
-- **Small jobs in Auto:** Prompt maker and Helper.
+- **Small jobs in Auto:** Prompt maker, Helper, Dash fixer and Test connection.
 - **The list lives in `config.js`,** so adding a model later is a one-line change.
 
 ## Storage
@@ -132,13 +132,14 @@ Zane picks the model in the app, either in Settings or by tapping the model badg
 - `status` is `writing`, `cleared` or `skipped`.
 - `by` is `you` or `ai`. Anything the Help button fills in is saved with `"by": "ai"` and shows a small "AI" tag.
 - `settings.model` is `auto` or a model ID from `config.js`, and `settings.tone` is `blunt` or `gentle`.
+- **Extra fields the app also saves:** `story.style` (`{ "preset", "tense" }`, Writer only), `story.finishedAt`, `idea.seed` and `idea.pitches` (Writer), `outline.beatsBy` (which beats the AI filled) and `outline.feedback`, `scene.working` (the text Zane is typing), `scene.notes` (Writer notes for the next revision), `polish.source` (the draft the changes apply to), `draft.changes` and `draft.critique` (Writer), and `drill.draft`.
 
 ## Text formatting
 
 - **Italics:** Wrap italic text in single asterisks, like `*this*`. On screen, the asterisks become `<em>` elements built with `createElement`. The HTML export uses `<em>`, and the `.txt` export strips the asterisks.
 - **No dashes or ellipses in AI story text.** That means em dashes (—), en dashes (–), double hyphens (--), a spaced hyphen ( - ), the ellipsis character (…) and three dots (...). Hyphens inside words like "well-known" are fine.
   - `js/lib/dashCheck.js` finds them.
-  - If AI text has any, ask once for a fixed version. If they're still there, show the text with those spots highlighted and a Fix again button.
+  - If AI text has any, ask once for a fixed version (the retry includes the first reply). If they're still there, show the text with those spots highlighted and a Fix again button, which runs the Dash fixer.
   - This applies to text from Scene writer, Reviser, the Polisher's `after` text, Helper fills, Pitch writer and Outline writer. The app never changes Zane's own writing on its own.
 
 ## The three modes
@@ -286,6 +287,7 @@ Every system prompt in `prompts.js` follows these rules:
 | Polisher | Big | Draft, latest grade, style preset | `{"changes": [{"before": "", "after": "", "why": ""}]}`. `before` is an exact quote. It keeps the plot, events, voice and best lines, can't add events or cut moments, and fixes what the grade flagged |
 | Scene writer | Big | Pitch, scene summaries, previous scene, this scene's summary and focus, POV, style preset | `{"text": ""}` |
 | Reviser | Big | Draft, notes (may be empty), style preset | `{"text": "", "changes": []}`. With empty notes, it critiques its own draft first |
+| Dash fixer | Small | A list of AI texts that still have dashes or ellipses | `{"texts": []}`, the same texts with only those spots fixed. Used by the Fix again button. |
 | Helper | Small | Action, mode, step, current content | Options: `{"options": ["", "", ""]}`. Questions: `{"questions": []}` (one to three). Fill for the idea step: `{"fill": {"pitch": ""}}`. Fill for the outline step: `{"fill": {"beats": {}, "scenes": []}}`, filling only the empty parts |
 
 ## Progress screen

@@ -12,7 +12,27 @@ export const MESSAGES = {
   refusal: 'Claude declined this one. Try rewording it.',
   cutoff: "The reply got cut off. Retry, or raise this job's max tokens in config.js.",
   empty: 'Claude sent back an empty reply. Retry in a moment.',
+  badJson: "Claude's reply came back in the wrong shape twice. Retry in a moment.",
 };
+
+// Builds a job's input as labeled sections, skipping empty ones, so each
+// call sends only what the job needs.
+export function formatInput(sections) {
+  return sections
+    .filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== '')
+    .map(([label, value]) => `${label}:\n${String(value).trim()}`)
+    .join('\n\n');
+}
+
+// The second try includes the first reply and what was wrong with it, so
+// Claude can send back a fixed version instead of starting over.
+export function retryInput(input, previousReply, problemNote) {
+  return formatInput([
+    ['ORIGINAL REQUEST', input],
+    ['YOUR PREVIOUS REPLY', previousReply],
+    ['PROBLEM', `${problemNote} Send the full corrected reply as only the JSON object.`],
+  ]);
+}
 
 export function isKnownModel(id) {
   return MODELS.some((m) => m.id === id);
